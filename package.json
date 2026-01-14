@@ -1,0 +1,6 @@
+{
+  "name": "ai-cfo-dashboard-sheets",
+  "version": "1.0.0",
+  "description": "AI CFO Dashboard powered by Google Sheets",
+  "type": "module"
+}
