@@ -42,6 +42,7 @@ export default async function handler(req, res) {
         const metrics = {};
         const bookings = [];
         const newLogos = [];
+        const metricsTimeseries = [];
 
         let currentSection = null;
         let isFirstRowOfSection = false;
@@ -62,7 +63,7 @@ export default async function handler(req, res) {
             }
 
             // Check if we're starting a new section
-            if ((section === 'DEALS' || section === 'METRICS' || section === 'BOOKINGS' || section === 'NEW_LOGOS') && section !== currentSection) {
+            if ((section === 'DEALS' || section === 'METRICS' || section === 'BOOKINGS' || section === 'NEW_LOGOS' || section === 'METRICS_TIMESERIES') && section !== currentSection) {
                 currentSection = section;
                 isFirstRowOfSection = true;
                 continue; // Skip the first row as it contains headers
@@ -97,6 +98,12 @@ export default async function handler(req, res) {
                     companies: row[2] || '',
                     average_acv: row[3] || ''
                 });
+            } else if (currentSection === 'METRICS_TIMESERIES' && section === 'METRICS_TIMESERIES' && row.length > 1) {
+                metricsTimeseries.push({
+                    type: row[1] || '',
+                    period: row[2] || '',
+                    value: row[3] || ''
+                });
             }
         }
 
@@ -106,10 +113,12 @@ export default async function handler(req, res) {
             metrics: metrics,
             bookings: bookings,
             newLogos: newLogos,
+            metricsTimeseries: metricsTimeseries,
             counts: {
                 deals: deals.length,
                 bookings: bookings.length,
-                newLogos: newLogos.length
+                newLogos: newLogos.length,
+                metricsTimeseries: metricsTimeseries.length
             }
         });
 

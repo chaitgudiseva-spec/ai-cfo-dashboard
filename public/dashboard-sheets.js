@@ -23,7 +23,8 @@ let dashboardData = {
     deals: [],
     metrics: {},
     bookings: [],
-    newLogos: []
+    newLogos: [],
+    metricsTimeseries: []
 };
 
 // Load data from Google Sheets
@@ -44,6 +45,7 @@ async function loadData() {
         dashboardData.metrics = data.metrics || {};
         dashboardData.bookings = data.bookings || [];
         dashboardData.newLogos = data.newLogos || [];
+        dashboardData.metricsTimeseries = data.metricsTimeseries || [];
 
         // Update all charts and metrics
         updateAllCharts();
@@ -201,13 +203,91 @@ function initOtherCharts() {
 }
 
 function initRemainingCharts() {
-    // Add all other 13 charts here (velocity, logos, cumulative, renewal, burn, cac, nrr, pipeline, churn, magic, ltvcac, cash, growth)
-    // Using the same structure as HubSpot version but with Google Sheets data
-
-    // For now, using sample data - you can customize these based on your Metrics sheet
     const metrics = dashboardData.metrics;
+    const timeseries = dashboardData.metricsTimeseries;
 
-    // Renewal Rate Gauge
+    // Helper function to get timeseries data by type
+    const getTimeseriesData = (type) => {
+        return timeseries.filter(t => t.type === type);
+    };
+
+    // Row 1, Col 3: Deal Velocity
+    const velocityData = getTimeseriesData('Deal Velocity');
+    const velocityCtx = document.getElementById('velocityChart').getContext('2d');
+    if (charts.velocity) charts.velocity.destroy();
+    charts.velocity = new Chart(velocityCtx, {
+        type: 'bar',
+        data: {
+            labels: velocityData.map(d => d.period),
+            datasets: [{
+                data: velocityData.map(d => parseFloat(d.value)),
+                backgroundColor: colors.secondary
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 2, Col 1: New Logos
+    const logosCtx = document.getElementById('logosChart').getContext('2d');
+    if (charts.logos) charts.logos.destroy();
+    charts.logos = new Chart(logosCtx, {
+        type: 'bar',
+        data: {
+            labels: dashboardData.newLogos.map(l => l.year),
+            datasets: [{
+                label: 'Companies',
+                data: dashboardData.newLogos.map(l => parseFloat(l.companies)),
+                backgroundColor: colors.secondary,
+                yAxisID: 'y'
+            }, {
+                label: 'Avg ACV',
+                data: dashboardData.newLogos.map(l => parseFloat(l.average_acv) / 1000),
+                backgroundColor: colors.navy,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { type: 'linear', position: 'left' },
+                y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 2, Col 2: Cumulative ARR
+    const cumulativeData = getTimeseriesData('Cumulative ARR');
+    const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
+    if (charts.cumulative) charts.cumulative.destroy();
+    charts.cumulative = new Chart(cumulativeCtx, {
+        type: 'line',
+        data: {
+            labels: cumulativeData.map(d => d.period),
+            datasets: [{
+                data: cumulativeData.map(d => parseFloat(d.value)),
+                borderColor: colors.secondary,
+                backgroundColor: 'transparent',
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: colors.secondary
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 2, Col 3: Renewal Rate Gauge
     const renewalCtx = document.getElementById('renewalGauge').getContext('2d');
     const renewalRate = parseFloat(metrics.gross_renewal_rate || 92.5);
     if (charts.renewal) charts.renewal.destroy();
@@ -230,7 +310,209 @@ function initRemainingCharts() {
         }
     });
 
-    // Add more charts as needed...
+    // Row 3, Col 1: Burn Multiple Gauge
+    const burnCtx = document.getElementById('burnGauge').getContext('2d');
+    const burnMultiple = parseFloat(metrics.burn_multiple || 1.2);
+    if (charts.burn) charts.burn.destroy();
+    charts.burn = new Chart(burnCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [burnMultiple, Math.max(0, 2 - burnMultiple)],
+                backgroundColor: [colors.green, colors.lightGray],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+    });
+
+    // Row 3, Col 2: CAC Payback
+    const cacData = getTimeseriesData('CAC Payback');
+    const cacCtx = document.getElementById('cacChart').getContext('2d');
+    if (charts.cac) charts.cac.destroy();
+    charts.cac = new Chart(cacCtx, {
+        type: 'bar',
+        data: {
+            labels: cacData.map(d => d.period),
+            datasets: [{
+                data: cacData.map(d => parseFloat(d.value)),
+                backgroundColor: colors.navy
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 3, Col 3: NRR
+    const nrrData = getTimeseriesData('NRR History');
+    const nrrCtx = document.getElementById('nrrChart').getContext('2d');
+    if (charts.nrr) charts.nrr.destroy();
+    charts.nrr = new Chart(nrrCtx, {
+        type: 'line',
+        data: {
+            labels: nrrData.map(d => d.period),
+            datasets: [{
+                data: nrrData.map(d => parseFloat(d.value)),
+                borderColor: colors.teal,
+                backgroundColor: 'transparent',
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: colors.teal
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: false, min: 100 } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 4, Col 1: Pipeline Coverage
+    const pipelineData = getTimeseriesData('Pipeline Coverage');
+    const pipelineCtx = document.getElementById('pipelineChart').getContext('2d');
+    if (charts.pipeline) charts.pipeline.destroy();
+    charts.pipeline = new Chart(pipelineCtx, {
+        type: 'bar',
+        data: {
+            labels: pipelineData.map(d => d.period),
+            datasets: [{
+                data: pipelineData.map(d => parseFloat(d.value)),
+                backgroundColor: colors.teal
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 4, Col 2: Churn Gauge
+    const churnCtx = document.getElementById('churnGauge').getContext('2d');
+    const churnRate = parseFloat(metrics.logo_churn_rate || 2.8);
+    if (charts.churn) charts.churn.destroy();
+    charts.churn = new Chart(churnCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [churnRate, 10 - churnRate],
+                backgroundColor: [colors.green, colors.lightGray],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+    });
+
+    // Row 4, Col 3: Magic Number
+    const magicData = getTimeseriesData('Magic Number History');
+    const magicCtx = document.getElementById('magicChart').getContext('2d');
+    if (charts.magic) charts.magic.destroy();
+    charts.magic = new Chart(magicCtx, {
+        type: 'bar',
+        data: {
+            labels: magicData.map(d => d.period),
+            datasets: [{
+                data: magicData.map(d => parseFloat(d.value)),
+                backgroundColor: colors.primary
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 5, Col 1: LTV:CAC Gauge
+    const ltvCacCtx = document.getElementById('ltvCacGauge').getContext('2d');
+    const ltvCac = parseFloat(metrics.ltv_to_cac_ratio || 4.2);
+    if (charts.ltvCac) charts.ltvCac.destroy();
+    charts.ltvCac = new Chart(ltvCacCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [ltvCac, Math.max(0, 5 - ltvCac)],
+                backgroundColor: [colors.green, colors.lightGray],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+    });
+
+    // Row 5, Col 2: Cash Runway
+    const cashData = getTimeseriesData('Cash Balance');
+    const cashCtx = document.getElementById('cashChart').getContext('2d');
+    if (charts.cash) charts.cash.destroy();
+    charts.cash = new Chart(cashCtx, {
+        type: 'line',
+        data: {
+            labels: cashData.map(d => d.period),
+            datasets: [{
+                label: 'Cash ($M)',
+                data: cashData.map(d => parseFloat(d.value)),
+                borderColor: colors.green,
+                backgroundColor: 'transparent',
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: colors.green
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: false } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Row 5, Col 3: ARR Growth Rate
+    const growthData = getTimeseriesData('ARR Growth Rate');
+    const growthCtx = document.getElementById('growthChart').getContext('2d');
+    if (charts.growth) charts.growth.destroy();
+    charts.growth = new Chart(growthCtx, {
+        type: 'bar',
+        data: {
+            labels: growthData.map(d => d.period),
+            datasets: [{
+                data: growthData.map(d => parseFloat(d.value)),
+                backgroundColor: colors.primary
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 
 // Chat Functionality
