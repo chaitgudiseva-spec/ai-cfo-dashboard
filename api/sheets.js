@@ -44,30 +44,32 @@ export default async function handler(req, res) {
         const newLogos = [];
 
         let currentSection = null;
-        let skipNextRow = false;
+        let isFirstRowOfSection = false;
 
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             const section = row[0];
 
-            // Check if this is a section marker
-            if (section === 'DEALS' || section === 'METRICS' || section === 'BOOKINGS' || section === 'NEW_LOGOS') {
-                currentSection = section;
-                skipNextRow = true; // Skip the header row that comes after the section marker
-                continue;
-            }
-
-            // Skip the header row after section marker
-            if (skipNextRow) {
-                skipNextRow = false;
+            // Skip the general header row
+            if (section === 'SECTION') {
                 continue;
             }
 
             // Skip empty rows
-            if (!section || section.trim() === '') continue;
+            if (!section || section.trim() === '') {
+                currentSection = null; // Reset section on empty row
+                continue;
+            }
+
+            // Check if we're starting a new section
+            if ((section === 'DEALS' || section === 'METRICS' || section === 'BOOKINGS' || section === 'NEW_LOGOS') && section !== currentSection) {
+                currentSection = section;
+                isFirstRowOfSection = true;
+                continue; // Skip the first row as it contains headers
+            }
 
             // Process data based on current section
-            if (currentSection === 'DEALS' && row.length > 1) {
+            if (currentSection === 'DEALS' && section === 'DEALS' && row.length > 1) {
                 deals.push({
                     deal_name: row[1] || '',
                     amount: row[2] || '',
@@ -76,20 +78,20 @@ export default async function handler(req, res) {
                     probability: row[5] || '',
                     created_date: row[6] || ''
                 });
-            } else if (currentSection === 'METRICS' && row.length > 1) {
+            } else if (currentSection === 'METRICS' && section === 'METRICS' && row.length > 1) {
                 const metric = row[1];
                 const value = row[2];
                 if (metric) {
                     metrics[metric.toLowerCase().replace(/\s+/g, '_')] = value;
                 }
-            } else if (currentSection === 'BOOKINGS' && row.length > 1) {
+            } else if (currentSection === 'BOOKINGS' && section === 'BOOKINGS' && row.length > 1) {
                 bookings.push({
                     quarter: row[1] || '',
                     new_customer: row[2] || '',
                     existing_customer: row[3] || '',
                     total: row[4] || ''
                 });
-            } else if (currentSection === 'NEW_LOGOS' && row.length > 1) {
+            } else if (currentSection === 'NEW_LOGOS' && section === 'NEW_LOGOS' && row.length > 1) {
                 newLogos.push({
                     year: row[1] || '',
                     companies: row[2] || '',
