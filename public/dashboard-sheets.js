@@ -211,6 +211,12 @@ function initRemainingCharts() {
         return timeseries.filter(t => t.type === type);
     };
 
+    // Helper function to parse values (removes $, commas, etc.)
+    const parseValue = (value) => {
+        if (!value) return 0;
+        return parseFloat(String(value).replace(/[$,]/g, '')) || 0;
+    };
+
     // Row 1, Col 3: Deal Velocity
     const velocityData = getTimeseriesData('Deal Velocity');
     const velocityCtx = document.getElementById('velocityChart').getContext('2d');
@@ -220,7 +226,7 @@ function initRemainingCharts() {
         data: {
             labels: velocityData.map(d => d.period),
             datasets: [{
-                data: velocityData.map(d => parseFloat(d.value)),
+                data: velocityData.map(d => parseValue(d.value)),
                 backgroundColor: colors.secondary
             }]
         },
@@ -241,12 +247,12 @@ function initRemainingCharts() {
             labels: dashboardData.newLogos.map(l => l.year),
             datasets: [{
                 label: 'Companies',
-                data: dashboardData.newLogos.map(l => parseFloat(l.companies)),
+                data: dashboardData.newLogos.map(l => parseValue(l.companies)),
                 backgroundColor: colors.secondary,
                 yAxisID: 'y'
             }, {
                 label: 'Avg ACV',
-                data: dashboardData.newLogos.map(l => parseFloat(l.average_acv) / 1000),
+                data: dashboardData.newLogos.map(l => parseValue(l.average_acv) / 1000),
                 backgroundColor: colors.navy,
                 yAxisID: 'y1'
             }]
@@ -271,7 +277,7 @@ function initRemainingCharts() {
         data: {
             labels: cumulativeData.map(d => d.period),
             datasets: [{
-                data: cumulativeData.map(d => parseFloat(d.value)),
+                data: cumulativeData.map(d => parseValue(d.value)),
                 borderColor: colors.secondary,
                 backgroundColor: 'transparent',
                 tension: 0.4,
@@ -342,7 +348,7 @@ function initRemainingCharts() {
         data: {
             labels: cacData.map(d => d.period),
             datasets: [{
-                data: cacData.map(d => parseFloat(d.value)),
+                data: cacData.map(d => parseValue(d.value)),
                 backgroundColor: colors.navy
             }]
         },
@@ -363,7 +369,7 @@ function initRemainingCharts() {
         data: {
             labels: nrrData.map(d => d.period),
             datasets: [{
-                data: nrrData.map(d => parseFloat(d.value)),
+                data: nrrData.map(d => parseValue(d.value)),
                 borderColor: colors.teal,
                 backgroundColor: 'transparent',
                 tension: 0.4,
@@ -388,7 +394,7 @@ function initRemainingCharts() {
         data: {
             labels: pipelineData.map(d => d.period),
             datasets: [{
-                data: pipelineData.map(d => parseFloat(d.value)),
+                data: pipelineData.map(d => parseValue(d.value)),
                 backgroundColor: colors.teal
             }]
         },
@@ -432,7 +438,7 @@ function initRemainingCharts() {
         data: {
             labels: magicData.map(d => d.period),
             datasets: [{
-                data: magicData.map(d => parseFloat(d.value)),
+                data: magicData.map(d => parseValue(d.value)),
                 backgroundColor: colors.primary
             }]
         },
@@ -477,7 +483,7 @@ function initRemainingCharts() {
             labels: cashData.map(d => d.period),
             datasets: [{
                 label: 'Cash ($M)',
-                data: cashData.map(d => parseFloat(d.value)),
+                data: cashData.map(d => parseValue(d.value)),
                 borderColor: colors.green,
                 backgroundColor: 'transparent',
                 tension: 0.4,
@@ -502,7 +508,7 @@ function initRemainingCharts() {
         data: {
             labels: growthData.map(d => d.period),
             datasets: [{
-                data: growthData.map(d => parseFloat(d.value)),
+                data: growthData.map(d => parseValue(d.value)),
                 backgroundColor: colors.primary
             }]
         },
