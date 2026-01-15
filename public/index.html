@@ -641,6 +641,10 @@
     </div>
 
     <script>
+        // Authentication temporarily disabled - dashboard is publicly accessible
+        // To enable authentication, configure Google OAuth and uncomment the code below
+
+        /*
         // Check authentication on page load
         window.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -652,22 +656,17 @@
                     return;
                 }
 
-                // User is authenticated, display user info if needed
                 console.log('Logged in as:', data.user.email);
             } catch (error) {
                 console.error('Auth check error:', error);
                 window.location.href = '/login.html';
             }
         });
+        */
 
         // Logout function
         async function logout() {
-            try {
-                await fetch('/api/auth/logout', { method: 'POST' });
-                window.location.href = '/login.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
+            alert('Authentication is currently disabled. The dashboard is publicly accessible.');
         }
     </script>
     <script src="/dashboard-sheets.js"></script>
