@@ -16,9 +16,18 @@ export default async function handler(req, res) {
 
     try {
         const clientId = process.env.GOOGLE_CLIENT_ID;
-        const redirectUri = process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}/api/auth/callback`
-            : 'http://localhost:3000/api/auth/callback';
+
+        // Determine the correct redirect URI based on environment
+        let redirectUri;
+        if (req.headers.host) {
+            // Use the actual host from the request
+            const protocol = req.headers.host.includes('localhost') ? 'http' : 'https';
+            redirectUri = `${protocol}://${req.headers.host}/api/auth/callback`;
+        } else if (process.env.VERCEL_URL) {
+            redirectUri = `https://${process.env.VERCEL_URL}/api/auth/callback`;
+        } else {
+            redirectUri = 'http://localhost:3000/api/auth/callback';
+        }
 
         if (!clientId) {
             throw new Error('Missing Google Client ID');
