@@ -12,8 +12,6 @@
 
         // Configuration
         let config = {
-            accessToken: localStorage.getItem('salesforce_token') || '',
-            instanceUrl: localStorage.getItem('salesforce_instance_url') || '',
             arrTarget: localStorage.getItem('arr_target') || 675000
         };
 
@@ -22,8 +20,6 @@
 
         // Modal functions
         function openConfigModal() {
-            document.getElementById('accessToken').value = config.accessToken;
-            document.getElementById('instanceUrl').value = config.instanceUrl;
             document.getElementById('arrTarget').value = config.arrTarget;
             document.getElementById('configModal').classList.add('active');
         }
@@ -33,26 +29,8 @@
         }
 
         function saveConfig() {
-            config.accessToken = document.getElementById('accessToken').value.trim();
-            config.instanceUrl = document.getElementById('instanceUrl').value.trim();
             config.arrTarget = document.getElementById('arrTarget').value;
-
-            console.log('Saving config with token length:', config.accessToken.length);
-
-            if (!config.accessToken) {
-                alert('Please enter a Salesforce access token');
-                return;
-            }
-
-            if (!config.instanceUrl) {
-                alert('Please enter your Salesforce instance URL');
-                return;
-            }
-
-            localStorage.setItem('salesforce_token', config.accessToken);
-            localStorage.setItem('salesforce_instance_url', config.instanceUrl);
             localStorage.setItem('arr_target', config.arrTarget);
-
             closeConfigModal();
             loadSalesforceData();
         }
@@ -62,23 +40,10 @@
         const API_BASE = 'https://ai-cfo-dashboard.vercel.app/api/salesforce';
 
         async function fetchSalesforceOpportunities() {
-            if (!config.accessToken) {
-                console.log('No access token configured');
-                return null;
-            }
-
             try {
                 console.log('Fetching opportunities from Salesforce...');
-                const soql = encodeURIComponent(
-                    'SELECT Id, Name, Amount, StageName, CloseDate, CreatedDate, Probability FROM Opportunity ORDER BY Amount DESC LIMIT 100'
-                );
-                const response = await fetch(`${API_BASE}?path=${encodeURIComponent('/services/data/v59.0/query')}&q=${soql}`, {
-                    headers: {
-                        'Authorization': `Bearer ${config.accessToken}`,
-                        'X-Salesforce-Instance-Url': config.instanceUrl,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const soql = 'SELECT Id, Name, Amount, StageName, CloseDate, CreatedDate, Probability FROM Opportunity ORDER BY Amount DESC LIMIT 100';
+                const response = await fetch(`${API_BASE}?q=${encodeURIComponent(soql)}`);
 
                 console.log('Response status:', response.status);
 
@@ -113,19 +78,9 @@
         }
 
         async function fetchSalesforceAccounts() {
-            if (!config.accessToken) return null;
-
             try {
-                const soql = encodeURIComponent(
-                    'SELECT Id, Name, CreatedDate, Type, Industry FROM Account ORDER BY CreatedDate DESC LIMIT 100'
-                );
-                const response = await fetch(`${API_BASE}?path=${encodeURIComponent('/services/data/v59.0/query')}&q=${soql}`, {
-                    headers: {
-                        'Authorization': `Bearer ${config.accessToken}`,
-                        'X-Salesforce-Instance-Url': config.instanceUrl,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const soql = 'SELECT Id, Name, CreatedDate, Type, Industry FROM Account ORDER BY CreatedDate DESC LIMIT 100';
+                const response = await fetch(`${API_BASE}?q=${encodeURIComponent(soql)}`);
 
                 if (!response.ok) throw new Error(`Salesforce API error: ${response.status}`);
                 const data = await response.json();
@@ -140,8 +95,6 @@
             addMessage('Loading data from Salesforce...', 'ai');
             console.log('Starting data load...');
             console.log('API Base:', API_BASE);
-            console.log('Token configured:', config.accessToken ? 'Yes' : 'No');
-            console.log('Instance URL:', config.instanceUrl);
 
             const opportunities = await fetchSalesforceOpportunities();
             console.log('Opportunities returned:', opportunities ? opportunities.length : 'null');
@@ -692,11 +645,12 @@
             const lowerMessage = message.toLowerCase();
 
             // Check if data is loaded
-            if (!config.accessToken || salesforceData.deals.length === 0) {
-                if (lowerMessage.includes('connect') || lowerMessage.includes('setup')) {
-                    return 'To connect to Salesforce, click the Settings button and enter your access token and instance URL. You can get a token from Setup > Apps > App Manager > Connected Apps, or use a session ID.';
+            if (salesforceData.deals.length === 0) {
+                if (lowerMessage.includes('refresh') || lowerMessage.includes('load')) {
+                    loadSalesforceData();
+                    return 'Refreshing data from Salesforce...';
                 }
-                return 'Please connect to Salesforce first by clicking Settings and entering your access token and instance URL. Then I can analyze your real-time data!';
+                return 'No data loaded yet. Click Refresh or wait for the data to load from Salesforce.';
             }
 
             // Analyze deals data
@@ -822,22 +776,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
 
-            // Auto-load Salesforce data if token is configured
-            if (config.accessToken) {
-                console.log('Token found, loading data...');
-                loadSalesforceData();
-            } else {
-                console.log('No token configured');
-                addMessage('Click the Settings button to connect to Salesforce and load your real-time data!', 'ai');
-
-                // Update deals table to show setup message
-                const tbody = document.getElementById('topDealsBody');
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 20px; color: #7c98b6;">
-                            Click Settings to configure your Salesforce connection
-                        </td>
-                    </tr>
-                `;
-            }
+            // Auto-load Salesforce data on page load
+            console.log('Loading Salesforce data...');
+            loadSalesforceData();
         });
