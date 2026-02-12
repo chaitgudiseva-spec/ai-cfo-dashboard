@@ -6,12 +6,20 @@
     "api/sheets.js": {
       "memory": 1024,
       "maxDuration": 10
+    },
+    "api/salesforce.js": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "rewrites": [
     {
       "source": "/api/sheets",
       "destination": "/api/sheets"
+    },
+    {
+      "source": "/api/salesforce",
+      "destination": "/api/salesforce"
     }
   ]
 }
