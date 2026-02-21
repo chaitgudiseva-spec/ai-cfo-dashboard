@@ -12,425 +12,218 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: #f5f8fa;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-            gap: 0;
-        }
-
-        .metrics-panel {
-            flex: 1;
-            background: #f5f8fa;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .chat-panel {
-            flex: 0 0 420px;
+            font-family: Arial, sans-serif;
             background: white;
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid #e1e8ed;
         }
 
-        .header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+        .table-container {
+            padding: 20px;
+            overflow-x: auto;
         }
 
-        h1 {
-            color: #33475b;
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        .config-button {
-            background: #ff7a59;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .config-button:hover {
-            background: #ff5c39;
-        }
-
-        /* Metrics Table Styles */
-        .metrics-table-wrapper {
-            background: white;
-            border: 1px solid #e1e8ed;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .metrics-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        .metrics-table th {
-            padding: 12px 16px;
-            text-align: center;
-            font-weight: 600;
-            color: #33475b;
-            border-bottom: 1px solid #e1e8ed;
-            border-right: 1px solid #e1e8ed;
-        }
-
-        .metrics-table th:first-child {
-            text-align: left;
-        }
-
-        .metrics-table th:last-child {
-            border-right: none;
-        }
-
-        .metrics-table th.header-group {
-            background: #33475b;
-            color: white;
             font-size: 13px;
-            letter-spacing: 0.5px;
         }
 
-        .metrics-table th.sub-header {
-            background: #f5f8fa;
-            font-size: 12px;
-            color: #516f90;
-        }
-
-        .metrics-table th.sub-header.actual {
-            background: #e8f4f8;
-        }
-
-        .metrics-table th.sub-header.forecast {
-            background: #fff8e1;
-        }
-
-        .metrics-table th.sub-header.danger {
-            background: #fce4ec;
-        }
-
-        .metrics-table th.sub-header.good {
-            background: #e8f5e9;
-        }
-
-        .metrics-table th.sub-header.great {
-            background: #c8e6c9;
-        }
-
-        .metrics-table td {
-            padding: 14px 16px;
+        th, td {
+            border: 1px solid #d0d0d0;
+            padding: 10px 14px;
             text-align: center;
-            color: #33475b;
-            border-bottom: 1px solid #f0f0f0;
-            border-right: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        /* Top header row */
+        thead tr:first-child th {
+            background: #4472c4;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 10px 14px;
+            border-color: #3a62a8;
+        }
+
+        thead tr:first-child th.target-header {
+            background: #7f7f7f;
+            border-color: #6a6a6a;
+        }
+
+        /* Sub-header row */
+        thead tr:nth-child(2) th {
+            background: #d6e4f0;
+            color: #333;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 6px 14px;
+        }
+
+        thead tr:nth-child(2) th.forecast {
+            background: #fce4b6;
+            color: #333;
+        }
+
+        thead tr:nth-child(2) th.danger-header {
+            background: #f4cccc;
+            color: #990000;
+        }
+
+        thead tr:nth-child(2) th.good-header {
+            background: #d9ead3;
+            color: #274e13;
+        }
+
+        thead tr:nth-child(2) th.great-header {
+            background: #b6d7a8;
+            color: #274e13;
+        }
+
+        /* First column (metric names) */
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        th:first-child {
+            text-align: left;
+            background: #4472c4;
+        }
+
+        /* Data cells - default white */
+        tbody td {
+            background: white;
+            color: #333;
             font-weight: 500;
         }
 
-        .metrics-table td:first-child {
-            text-align: left;
-            font-weight: 600;
-            background: #fafbfc;
-            color: #33475b;
+        /* Color classes for data cells */
+        td.green {
+            background: #d9ead3;
+            color: #274e13;
         }
 
-        .metrics-table td:last-child {
-            border-right: none;
+        td.light-green {
+            background: #e8f5e9;
+            color: #274e13;
         }
 
-        .metrics-table tr:last-child td {
-            border-bottom: none;
+        td.yellow {
+            background: #fff2cc;
+            color: #7f6000;
         }
 
-        .metrics-table tr:hover td {
-            background-color: #f9fafb;
+        td.red {
+            background: #f4cccc;
+            color: #990000;
         }
 
-        .metrics-table tr:hover td:first-child {
-            background-color: #f0f2f5;
+        /* Target zone cells */
+        td.tz-danger {
+            background: #f4cccc;
+            color: #990000;
+            font-weight: 500;
         }
 
-        /* Cell color classes */
-        td.great {
-            background: #c8e6c9 !important;
-            color: #2e7d32;
-            font-weight: 600;
+        td.tz-good {
+            background: #d9ead3;
+            color: #274e13;
+            font-weight: 500;
         }
 
-        td.good {
-            background: #e8f5e9 !important;
-            color: #388e3c;
-            font-weight: 600;
-        }
-
-        td.warning {
-            background: #fff8e1 !important;
-            color: #f57f17;
-            font-weight: 600;
-        }
-
-        td.danger {
-            background: #fce4ec !important;
-            color: #c62828;
-            font-weight: 600;
-        }
-
-        td.target-danger {
-            background: #fce4ec !important;
-            color: #c62828;
-            font-size: 13px;
-        }
-
-        td.target-good {
-            background: #e8f5e9 !important;
-            color: #388e3c;
-            font-size: 13px;
-        }
-
-        td.target-great {
-            background: #c8e6c9 !important;
-            color: #2e7d32;
-            font-size: 13px;
-        }
-
-        /* Chat Styles */
-        .chat-header {
-            background: #ff7a59;
-            color: white;
-            padding: 20px 24px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #ffffff;
-        }
-
-        .message {
-            margin-bottom: 16px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
-
-        .message-bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 8px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        .message.ai .message-bubble {
-            background: #f5f8fa;
-            color: #33475b;
-        }
-
-        .message.user .message-bubble {
-            background: #ff7a59;
-            color: white;
-        }
-
-        .chat-input-container {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e1e8ed;
-        }
-
-        .chat-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #cbd6e2;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-            resize: none;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: #ff7a59;
-            box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
-        }
-
-        .send-button {
-            margin-top: 12px;
-            width: 100%;
-            padding: 12px;
-            background: #ff7a59;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .send-button:hover {
-            background: #ff5c39;
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .chat-panel {
-                flex: 0 0 300px;
-                border-left: none;
-                border-top: 1px solid #e1e8ed;
-            }
-
-            .metrics-table-wrapper {
-                overflow-x: auto;
-            }
+        td.tz-great {
+            background: #b6d7a8;
+            color: #274e13;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Left Panel - Metrics Dashboard -->
-        <div class="metrics-panel">
-            <div class="header-controls">
-                <h1>Quarterly Metrics Review</h1>
-                <div style="display: flex; gap: 10px;">
-                    <button class="config-button" onclick="logout()" style="background: #e74c3c;">Logout</button>
-                </div>
-            </div>
-
-            <div class="metrics-table-wrapper">
-                <table class="metrics-table">
-                    <thead>
-                        <tr>
-                            <th class="header-group" rowspan="2" style="min-width: 200px;"></th>
-                            <th class="header-group">EQ2 July 2025</th>
-                            <th class="header-group">EQ3 Oct 2025</th>
-                            <th class="header-group">EOY 26 Jan 2026</th>
-                            <th class="header-group">EQ1 April 2026</th>
-                            <th class="header-group" colspan="3">Target Zones</th>
-                        </tr>
-                        <tr>
-                            <th class="sub-header actual">Actual</th>
-                            <th class="sub-header actual">Actual</th>
-                            <th class="sub-header actual">Actual</th>
-                            <th class="sub-header forecast">Forecast</th>
-                            <th class="sub-header danger">Danger Zone</th>
-                            <th class="sub-header good">Good</th>
-                            <th class="sub-header great">Great</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ARR Growth (YoY)</td>
-                            <td class="great">2.8x</td>
-                            <td class="good">2.4x</td>
-                            <td class="good">2.2x</td>
-                            <td class="good">2.1x</td>
-                            <td class="target-danger">&lt;2x</td>
-                            <td class="target-good">2.5x</td>
-                            <td class="target-great">3x</td>
-                        </tr>
-                        <tr>
-                            <td>NRR (T4Q cohorted)</td>
-                            <td class="great">119%</td>
-                            <td class="great">126%</td>
-                            <td class="danger">88%</td>
-                            <td class="great">138%</td>
-                            <td class="target-danger">&lt;105%</td>
-                            <td class="target-good">105% - 115%</td>
-                            <td class="target-great">115%+</td>
-                        </tr>
-                        <tr>
-                            <td>Logo Retention (T4Q cohorted)</td>
-                            <td class="great">93%</td>
-                            <td class="great">94%</td>
-                            <td class="great">91%</td>
-                            <td class="great">92%</td>
-                            <td class="target-danger">&lt;85%</td>
-                            <td class="target-good">85 - 90%</td>
-                            <td class="target-great">&gt;90%</td>
-                        </tr>
-                        <tr>
-                            <td>Gross Margin</td>
-                            <td class="good">75%</td>
-                            <td class="good">71%</td>
-                            <td class="warning">68%</td>
-                            <td class="warning">65%</td>
-                            <td class="target-danger">&lt;60%</td>
-                            <td class="target-good">70%+</td>
-                            <td class="target-great">80%+</td>
-                        </tr>
-                        <tr>
-                            <td>T1Q Payback Period (months)</td>
-                            <td class="great">8</td>
-                            <td class="great">12</td>
-                            <td class="great">5</td>
-                            <td class="great">8</td>
-                            <td class="target-danger">&gt;24 mo.</td>
-                            <td class="target-good">&lt;18 mo.</td>
-                            <td class="target-great">&lt;12 mo.</td>
-                        </tr>
-                        <tr>
-                            <td>Burn Multiple (T3M)</td>
-                            <td class="warning">1.5</td>
-                            <td class="danger">1.8</td>
-                            <td class="great">0.7</td>
-                            <td class="danger">1.7</td>
-                            <td class="target-danger">&gt;2.0x</td>
-                            <td class="target-good">1.0 - 1.5x</td>
-                            <td class="target-great">&lt;1 or less</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Right Panel - Chat Interface -->
-        <div class="chat-panel">
-            <div class="chat-header">AI CFO Assistant</div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message ai">
-                    <div class="message-bubble">
-                        Hello! I'm your AI CFO assistant. Connect to HubSpot in Settings, then ask me anything:<br><br>
-                        • "What are my top deals?"<br>
-                        • "How much is my pipeline worth?"<br>
-                        • "Which deals are closing soon?"<br>
-                        • "What's my H2 ARR progress?"<br>
-                        • "Show me deals by stage"
-                    </div>
-                </div>
-            </div>
-            <div class="chat-input-container">
-                <textarea
-                    class="chat-input"
-                    id="chatInput"
-                    placeholder="Ask about ARR, bookings, burn rate, churn, renewals..."
-                    rows="3"
-                ></textarea>
-                <button class="send-button" onclick="sendMessage()">Send</button>
-            </div>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2"></th>
+                    <th>EQ2 July 2025</th>
+                    <th>EQ3 Oct 2025</th>
+                    <th>EOY 26 Jan 2026</th>
+                    <th>EQ1 April 2026</th>
+                    <th class="target-header" colspan="3">Target Zones</th>
+                </tr>
+                <tr>
+                    <th>Actual</th>
+                    <th>Actual</th>
+                    <th>Actual</th>
+                    <th class="forecast">Forecast</th>
+                    <th class="danger-header">Danger Zone</th>
+                    <th class="good-header">Good</th>
+                    <th class="great-header">Great</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ARR Growth (YoY)</td>
+                    <td class="green">2.8x</td>
+                    <td class="light-green">2.4x</td>
+                    <td class="light-green">2.2x</td>
+                    <td class="light-green">2.1x</td>
+                    <td class="tz-danger">&lt;2x</td>
+                    <td class="tz-good">2.5x</td>
+                    <td class="tz-great">3x</td>
+                </tr>
+                <tr>
+                    <td>NRR (T4Q cohorted)</td>
+                    <td class="green">119%</td>
+                    <td class="green">126%</td>
+                    <td class="red">88%</td>
+                    <td class="green">138%</td>
+                    <td class="tz-danger">&lt;105%</td>
+                    <td class="tz-good">105% - 115%</td>
+                    <td class="tz-great">115%+</td>
+                </tr>
+                <tr>
+                    <td>Logo Retention (T4Q cohorted)</td>
+                    <td class="green">93%</td>
+                    <td class="green">94%</td>
+                    <td class="green">91%</td>
+                    <td class="green">92%</td>
+                    <td class="tz-danger">&lt;85%</td>
+                    <td class="tz-good">85 - 90%</td>
+                    <td class="tz-great">&gt;90%</td>
+                </tr>
+                <tr>
+                    <td>Gross Margin</td>
+                    <td class="green">75%</td>
+                    <td class="green">71%</td>
+                    <td class="yellow">68%</td>
+                    <td class="yellow">65%</td>
+                    <td class="tz-danger">&lt;60%</td>
+                    <td class="tz-good">70%+</td>
+                    <td class="tz-great">80%+</td>
+                </tr>
+                <tr>
+                    <td>T1Q Payback Period (months)</td>
+                    <td class="green">8</td>
+                    <td class="green">12</td>
+                    <td class="green">5</td>
+                    <td class="green">8</td>
+                    <td class="tz-danger">&gt;24 mo.</td>
+                    <td class="tz-good">&lt;18 mo.</td>
+                    <td class="tz-great">&lt;12 mo.</td>
+                </tr>
+                <tr>
+                    <td>Burn Multiple (T3M)</td>
+                    <td class="yellow">1.5</td>
+                    <td class="red">1.8</td>
+                    <td class="green">0.7</td>
+                    <td class="red">1.7</td>
+                    <td class="tz-danger">&gt;2.0x</td>
+                    <td class="tz-good">1.0 - 1.5x</td>
+                    <td class="tz-great">&lt;1 or less</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -463,36 +256,6 @@
                 console.error('Logout error:', error);
             }
         }
-    </script>
-    <script>
-        // Chat Functionality
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-            addMessage(message, 'user');
-            chatInput.value = '';
-            setTimeout(() => {
-                addMessage('I can help you understand these quarterly metrics. What would you like to know?', 'ai');
-            }, 500);
-        }
-
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
     </script>
 </body>
 </html>
