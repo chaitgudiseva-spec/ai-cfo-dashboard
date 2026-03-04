@@ -1,6 +1,6 @@
 # AI CFO Dashboard - Google Sheets Version
 
-A simplified AI CFO dashboard that pulls data directly from Google Sheets. No HubSpot integration needed!
+A simplified AI CFO dashboard that pulls data directly from Google Sheets. Also supports Salesforce integration for live CRM data.
 
 ## ✨ Features
 
@@ -94,23 +94,23 @@ BigCo Integration,200000,Negotiation,2025-02-20,90,2024-12-15
 
 Just edit your Google Sheet! The dashboard has a "Refresh Data" button to pull the latest changes.
 
-## 🆚 Comparison with HubSpot Version
+## 🆚 Comparison with Salesforce Version
 
 **Google Sheets Version (This One):**
 - ✅ Simpler setup
-- ✅ Free (no HubSpot subscription needed)
+- ✅ Free (no Salesforce subscription needed)
 - ✅ Easy data entry in spreadsheet
 - ✅ Visual data management
 - ✅ No authentication needed
 - ❌ Manual data entry required
 
-**HubSpot Version:**
+**Salesforce Version:**
 - ✅ Automatic data sync
 - ✅ Part of existing CRM workflow
-- ✅ More detailed deal properties
-- ❌ Requires HubSpot subscription
+- ✅ More detailed opportunity properties
+- ❌ Requires Salesforce subscription
 - ❌ More complex setup
-- ❌ Needs HubSpot token management
+- ❌ Needs Salesforce Connected App / token management
 
 ## 📚 Documentation
 

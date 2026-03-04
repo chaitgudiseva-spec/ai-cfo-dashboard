@@ -425,7 +425,6 @@
                 <h1>2025 H2 OKRs - Google Sheets</h1>
                 <div style="display: flex; gap: 10px;">
                     <button class="config-button" onclick="loadData()">🔄 Refresh Data</button>
-                    <button class="config-button" onclick="logout()" style="background: #e74c3c;">🚪 Logout</button>
                 </div>
             </div>
 
@@ -619,7 +618,7 @@
             <div class="chat-messages" id="chatMessages">
                 <div class="message ai">
                     <div class="message-bubble">
-                        Hello! I'm your AI CFO assistant. Connect to HubSpot in Settings, then ask me anything:<br><br>
+                        Hello! I'm your AI CFO assistant. Connect to Salesforce in Settings, then ask me anything:<br><br>
                         • "What are my top deals?"<br>
                         • "How much is my pipeline worth?"<br>
                         • "Which deals are closing soon?"<br>
@@ -640,37 +639,6 @@
         </div>
     </div>
 
-    <script>
-        // Check authentication on page load
-        window.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/api/auth/check');
-                const data = await response.json();
-
-                if (!data.authenticated) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                console.log('Logged in as:', data.user.email);
-            } catch (error) {
-                console.error('Auth check error:', error);
-                window.location.href = '/login.html';
-            }
-        });
-
-        // Logout function
-        async function logout() {
-            try {
-                const response = await fetch('/api/auth/logout', { method: 'POST' });
-                if (response.ok) {
-                    window.location.href = '/login.html';
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        }
-    </script>
     <script src="/dashboard-sheets.js"></script>
 </body>
 </html>
